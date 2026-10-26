@@ -45,6 +45,8 @@ func normalize(s string) string {
 	for _, r := range s {
 		if unicode.IsLetter(r) || r == ' ' {
 			buf.WriteRune(r)
+		} else if r == '-' || r == '\'' {
+			buf.WriteRune(' ')
 		} else if r == '&' {
 			buf.WriteString(" and ")
 		}
