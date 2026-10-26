@@ -162,9 +162,12 @@ func matchPhonetic(a, b string) (float64, string) {
 		return 0, "not applicable: token count mismatch"
 	}
 	for i := range wa {
-		// single-char tokens are initials, not full words — skip phonetic comparison
 		if len(wa[i]) == 1 || len(wb[i]) == 1 {
 			continue
+		}
+		threshold := max(1, max(len(wa[i]), len(wb[i]))/4)
+		if levenshtein(wa[i], wb[i]) > threshold {
+			return 0, fmt.Sprintf("edit distance too large: %s vs %s", wa[i], wb[i])
 		}
 		sa, sb := soundex(wa[i]), soundex(wb[i])
 		if sa != sb {
@@ -172,6 +175,35 @@ func matchPhonetic(a, b string) (float64, string) {
 		}
 	}
 	return 1, "phonetic match via soundex"
+}
+
+func levenshtein(a, b string) int {
+	ra, rb := []rune(a), []rune(b)
+	la, lb := len(ra), len(rb)
+	if la == 0 {
+		return lb
+	}
+	if lb == 0 {
+		return la
+	}
+	row := make([]int, lb+1)
+	for j := range row {
+		row[j] = j
+	}
+	for i := 1; i <= la; i++ {
+		prev := i
+		for j := 1; j <= lb; j++ {
+			sub := row[j-1]
+			if ra[i-1] != rb[j-1] {
+				sub++
+			}
+			curr := min(row[j]+1, min(prev+1, sub))
+			row[j-1] = prev
+			prev = curr
+		}
+		row[lb] = prev
+	}
+	return row[lb]
 }
 
 var soundexTable = map[rune]byte{

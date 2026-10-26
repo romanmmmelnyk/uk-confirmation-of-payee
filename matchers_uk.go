@@ -18,9 +18,6 @@ func init() {
 	)
 }
 
-// matchSubsequence fires when one name's tokens are a proper subsequence of the
-// other's — covering middle-name drops, name particles (van/de/bint/al) and
-// hyphenated-component drops in a single unified check.
 func matchSubsequence(a, b string) (float64, string) {
 	wa, wb := strings.Fields(a), strings.Fields(b)
 	if isSubsequence(wa, wb) {
@@ -32,9 +29,6 @@ func matchSubsequence(a, b string) (float64, string) {
 	return 0, "no subsequence match"
 }
 
-// isSubsequence returns true when short is a proper subsequence of long:
-// every token of short appears in long in order, at least one token is skipped,
-// coverage ≥ 40%, and token matching is initial-aware.
 func isSubsequence(short, long []string) bool {
 	if len(short) < 2 || len(short) >= len(long) {
 		return false
@@ -51,8 +45,6 @@ func isSubsequence(short, long []string) bool {
 	return j == len(short)
 }
 
-// tokenMatches returns true when a equals b, or one is a single-char initial
-// of the other (e.g. "j" matches "john").
 func tokenMatches(a, b string) bool {
 	if a == b {
 		return true

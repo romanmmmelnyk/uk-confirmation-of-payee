@@ -36,6 +36,10 @@ func Verify(registered, candidate string) Result {
 	a := normalize(registered)
 	b := normalize(candidate)
 
+	if a == "" || b == "" {
+		return Result{Verdict: NoMatch, Score: 0}
+	}
+
 	evidence := make([]Evidence, len(pipeline))
 	for i, m := range pipeline {
 		conf, reason := m.run(a, b)
